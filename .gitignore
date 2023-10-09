@@ -1,0 +1,8 @@
+Wild-pBWT/
+output/
+csv/
+workshop10k/
+*.txt
+*.log
+*.zip
+.snakemake/

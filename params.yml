@@ -1,0 +1,4 @@
+DIRCSV: "csv/" # SNPS (rows), Haplotypes (columns)
+DIROUT: "output/"
+
+PATH_WILD_PBWT: "Wild-pBWT/bin/wild-pbwt" # the snakemake pipeline should download the wild-pbwt here
