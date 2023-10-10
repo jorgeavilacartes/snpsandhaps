@@ -4,6 +4,9 @@ from pathlib import Path
 DIROUT = Path(config["DIROUT"])
 DIROUT.mkdir(exist_ok=True, parents=True)
 
+DIRLOGS = DIROUT.joinpath("logs")
+DIRLOGS.mkdir(exist_ok=True, parents=True)
+
 DIRCSV=Path(config["DIRCSV"])
 NAMES=[p.stem for p in DIRCSV.rglob("*csv")]
 
@@ -41,8 +44,10 @@ rule create_panel:
         path_csv=DIRCSV.joinpath("{name}.csv")
     output:
         path_panel=DIROUT.joinpath("panel-{name}.txt")
+    log:
+        DIRLOGS.joinpath("{name}-rule-create_panel.log")
     shell:
-        "python csv2panel.py {input.path_csv} {output.path_panel}"
+        "/usr/bin/time --verbose python csv2panel.py {input.path_csv} {output.path_panel} 2> {log}"
 
 rule compute_max_blocks:
     input:
@@ -50,10 +55,12 @@ rule compute_max_blocks:
         path_panel=DIROUT.joinpath("panel-{name}.txt")
     output: 
         path_blocks=DIROUT.joinpath("blocks-{name}.txt")
+    log:
+        DIRLOGS.joinpath("{name}-rule-compute_max_blocks.log")
     params:
         path_pbwt=config["PATH_WILD_PBWT"]
     shell:
-        "{params.path_pbwt} -a 2 -f {input.path_panel} -b 2 -o y > {output.path_blocks}"
+        "/usr/bin/time --verbose {params.path_pbwt} -a 2 -f {input.path_panel} -b 2 -o y > {output.path_blocks} 2> {log}"
 
 rule compute_sets:
     input:
@@ -61,5 +68,7 @@ rule compute_sets:
         path_panel=DIROUT.joinpath("panel-{name}.txt")
     output:
         path_sites_hap=DIROUT.joinpath("sites_haplotypes-{name}.txt")
+    log:
+        DIRLOGS.joinpath("{name}-rule-compute_sets.log")
     shell:
-        "python blocks2sets.py {output.path_sites_hap} {input.path_panel} {input.path_blocks}"
+        "/usr/bin/time --verbose python blocks2sets.py {output.path_sites_hap} {input.path_panel} {input.path_blocks} 2> {log}"

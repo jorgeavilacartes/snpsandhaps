@@ -1,3 +1,16 @@
+### create environment to run snakemake 
+```bash
+micromamba env create -n snakemake -f envs/snakemake.yml
+micromamba activate snakemake
+```
+
+run pipeline, set parameters in `params.yml`
+```bash
+snakemake -s computesets.smk -c 16 --use-conda
+```
+
+### what the pipeline does.
+
 Given an haplotype panel in the format of the one in `data/test.csv` with SNPs as rows, and Haplotypes as columns,
 return a plain text file with two columns (separated by "\t"):
 - column1: set of SNPs (indexes) split by ","
